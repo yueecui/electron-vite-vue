@@ -1,10 +1,18 @@
-import { createApp } from 'vue'
-import "./style.css"
-import App from './App.vue'
-import './samples/node-api'
+import { createApp, nextTick } from 'vue';
+import App from './App.vue';
+import { router, setupRouter } from './routers';
+import { setupStore } from './stores';
+import './style/common.less';
 
-createApp(App)
-  .mount('#app')
-  .$nextTick(() => {
-    postMessage({ payload: 'removeLoading' }, '*')
-  })
+(async () => {
+    const app = createApp(App);
+    setupStore(app);
+
+    await setupRouter(app);
+    await router!.isReady();
+
+    app.mount('#app');
+    nextTick(() => {
+        postMessage({ payload: 'removeLoading' }, '*');
+    });
+})();
